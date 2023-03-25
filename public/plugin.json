@@ -1,0 +1,12 @@
+{
+  "main": "http://127.0.0.1:3000/",
+  "preload": "preload.js",
+  "logo": "logo.png",
+  "features": [
+    {
+      "code": "clipboard",
+      "explain": "功能强大的剪贴板",
+      "cmds": ["剪切板", "剪贴板"]
+    }
+  ]
+}
