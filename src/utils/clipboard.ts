@@ -19,17 +19,28 @@ export type ClipBoardRawData =
         isDirectory: boolean;
         name: string;
         path: string;
+        icon: string;
       }[];
     };
 /**
  * 读取当前剪贴板数据
  */
-export const readClipBoard = (): ClipBoardRawData | undefined => {
-  const files = utools.getCopyedFiles();
+export const readClipBoard = async (): Promise<
+  ClipBoardRawData | undefined
+> => {
+  let files = utools.getCopyedFiles();
   if (files) {
     return {
       type: ClipBoardDataType.file,
-      files,
+      files: await Promise.all(
+        files.map(async (x) => {
+          const icon = window.utools.getFileIcon(x.path);
+          return {
+            ...x,
+            icon,
+          };
+        })
+      ),
     };
   }
 

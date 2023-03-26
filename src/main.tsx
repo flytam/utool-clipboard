@@ -3,7 +3,13 @@ import App from "./App";
 import "./index.css";
 import VConsole from "vconsole";
 
-const vconsole = new VConsole();
+if (DEBUG) {
+  // const vconsole = new VConsole();
+}
+
+window.addEventListener("error", (e) => {
+  window.utools.showNotification(e.message);
+});
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <App />

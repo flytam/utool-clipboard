@@ -1,14 +1,7 @@
-import axios from "axios";
 import { arrayBufferToBase64 } from "./arraybuffer";
+import { darwin, win32, linux} from '../node-clipboard'
+import { wait } from "./timer";
 
-const targetMap = {
-  win32:
-    "https://raw.githubusercontent.com/sudhakar3697/node-clipboard-event/d2c02920b719d429fda8abe5ad3ab985ac94c28e/platform/clipboard-event-handler-win32.exe",
-  linux:
-    "https://raw.githubusercontent.com/sudhakar3697/node-clipboard-event/d2c02920b719d429fda8abe5ad3ab985ac94c28e/platform/clipboard-event-handler-linux",
-  darwin:
-    "https://raw.githubusercontent.com/sudhakar3697/node-clipboard-event/d2c02920b719d429fda8abe5ad3ab985ac94c28e/platform/clipboard-event-handler-mac",
-};
 
 export const downloadClipboard = async () => {
   if (
@@ -16,16 +9,16 @@ export const downloadClipboard = async () => {
       window.utoolClipboard.clipboardListener.filePath
     )
   ) {
+   console.log('剪切板程序已存在')
     return;
   }
 
-  const { data } = await axios.get(targetMap.darwin, {
-    responseType: "arraybuffer",
-  });
+  console.log('剪切板程序不存在，安装中')
 
-  const str = arrayBufferToBase64(data);
   window.utoolClipboard.writeFileBase64Sync(
     window.utoolClipboard.clipboardListener.filePath,
-    str
+    darwin
   );
+
+  await wait(500)
 };

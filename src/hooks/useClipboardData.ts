@@ -14,7 +14,7 @@ interface params {
   filter?: ClipBoardDataType;
 }
 
-const MAX_SIZE = 50;
+const MAX_SIZE = 100;
 
 export const useClipboardData = ({ filter }: params = {}) => {
   // TODO: 本地持久化，使用写本地文件替代
@@ -30,8 +30,9 @@ export const useClipboardData = ({ filter }: params = {}) => {
   useEffect(() => {
     downloadClipboard().then(() => {
       window.utoolClipboard.clipboardListener.startListening();
-      window.utoolClipboard.clipboardListener.on("change", () => {
-        const item = readClipBoard();
+      window.utoolClipboard.clipboardListener.on("change", async () => {
+        const item = await readClipBoard();
+        console.log("Data from clipboard", item);
         if (item) {
           setClipBoardList((pre = []) =>
             [

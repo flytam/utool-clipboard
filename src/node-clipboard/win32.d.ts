@@ -1,0 +1,1 @@
+export const win32: string;

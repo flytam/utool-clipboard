@@ -6,7 +6,7 @@ import {
   IconButton,
   ThemeProvider,
 } from "@mui/material";
-import { FilterTab } from "./components/FilterTab";
+import { FilterTab, filterTabList } from "./components/FilterTab";
 import { useClipboardData } from "./hooks/useClipboardData";
 import { ClipBoardList } from "./components/ClipBoardList";
 import { ClipBoardDataType, copyToClipBoard, paste } from "./utils/clipboard";
@@ -15,11 +15,15 @@ import { useThemeProvider } from "./hooks/useThemeProvider";
 import { Clear } from "./components/Clear";
 
 function App() {
-  const [clipBoardType, setClipBoard] = useState<ClipBoardDataType>(
-    ClipBoardDataType.all
-  );
+  const [clipBoardType, setClipBoard] = useState<{
+    type: ClipBoardDataType;
+    index: number;
+  }>({
+    type: ClipBoardDataType.all,
+    index: 0,
+  });
   const { clipBoardList, clear } = useClipboardData({
-    filter: clipBoardType,
+    filter: clipBoardType.type,
   });
 
   const { Provider } = useThemeProvider();
@@ -43,9 +47,26 @@ function App() {
     listRef.current?.scrollTo(0, 0);
   });
 
-  const listRef = useRef<HTMLUListElement | null>(null);
+  useKeyPress("leftarrow", () => {
+    const nextIndex = Math.max(0, clipBoardType.index - 1);
+    setClipBoard({
+      index: nextIndex,
+      type: filterTabList[nextIndex].value,
+    });
+  });
 
-  console.log("clipBoardList", clipBoardList);
+  useKeyPress("rightarrow", () => {
+    const nextIndex = Math.min(
+      filterTabList.length - 1,
+      clipBoardType.index + 1
+    );
+    setClipBoard({
+      index: nextIndex,
+      type: filterTabList[nextIndex].value,
+    });
+  });
+
+  const listRef = useRef<HTMLUListElement | null>(null);
 
   return (
     <Provider>
@@ -59,9 +80,12 @@ function App() {
         <Clear onClick={clear} />
 
         <FilterTab
-          value={clipBoardType}
-          onChange={(v) => {
-            setClipBoard(v);
+          value={clipBoardType.type}
+          onChange={(type, index) => {
+            setClipBoard({
+              type,
+              index,
+            });
           }}
         />
         <ClipBoardList

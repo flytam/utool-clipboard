@@ -29,8 +29,9 @@ export const ClipBoardItemContent: FC<{
         }}
       >
         {item.files.map((file) => (
-          <Box key={file.path}>
-            <Typography>{file.name}</Typography>
+          <Box key={file.path} display="flex" marginTop="5px">
+            <img src={file.icon} className="w-5" />{" "}
+            <Typography sx={{ marginLeft: "10px" }}>{file.name}</Typography>
           </Box>
         ))}
       </Box>

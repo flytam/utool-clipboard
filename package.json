@@ -3,10 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "export DEBUG=1 && vite",
     "build": "tsc && vite build",
-    "dev:preload": "npm run build:preload -- --watch",
-    "build:preload": "tsc -p tsconfig.preload.json",
+    "build:debug": "export DEBUG=1 && npm run build",
     "preview": "vite preview",
     "prepare": "husky install"
   },

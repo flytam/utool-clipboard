@@ -10,7 +10,7 @@ class ClipboardEventListener extends EventEmitter {
     this.listening = false;
   }
 
-  filePath = join(homedir(), "_tmp_utool");
+  filePath = join(homedir(), "utool_clipboard");
 
   async startListening() {
     const { platform } = process;

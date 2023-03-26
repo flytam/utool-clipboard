@@ -21,6 +21,8 @@ declare global {
     utoolClipboard: utoolClipboard;
   }
 
+  const DEBUG: boolean;
+
   interface UToolsApi {
     /**
      * 设置子输入框

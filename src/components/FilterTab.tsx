@@ -1,12 +1,4 @@
-import {
-  Box,
-  Tabs,
-  Tab,
-  colors,
-  makeStyles,
-  createStyles,
-  SxProps,
-} from "@mui/material";
+import { Box, Tabs, Tab, colors, SxProps } from "@mui/material";
 import { FC } from "react";
 import { ClipBoardDataType } from "../utils/clipboard";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
@@ -15,9 +7,32 @@ import FilePresentIcon from "@mui/icons-material/FilePresent";
 import BallotIcon from "@mui/icons-material/Ballot";
 interface IFilterTabProps {
   value: ClipBoardDataType;
-  onChange: (v: ClipBoardDataType) => void;
+  onChange: (v: ClipBoardDataType, index: number) => void;
   sx?: SxProps;
 }
+
+export const filterTabList = [
+  {
+    label: "全部",
+    icon: <BallotIcon />,
+    value: ClipBoardDataType.all,
+  },
+  {
+    label: "文本",
+    icon: <TextSnippetIcon />,
+    value: ClipBoardDataType.text,
+  },
+  {
+    label: "文件",
+    icon: <FilePresentIcon />,
+    value: ClipBoardDataType.file,
+  },
+  {
+    label: "图片",
+    icon: <ImageIcon />,
+    value: ClipBoardDataType.image,
+  },
+];
 
 export const FilterTab: FC<IFilterTabProps> = ({
   value,
@@ -36,7 +51,12 @@ export const FilterTab: FC<IFilterTabProps> = ({
     >
       <Tabs
         value={value}
-        onChange={(_, v) => onChange(v)}
+        onChange={(_, v) =>
+          onChange(
+            v,
+            filterTabList.findIndex((x) => x.value === v)
+          )
+        }
         classes={{
           flexContainer: "oooo",
         }}
@@ -47,41 +67,15 @@ export const FilterTab: FC<IFilterTabProps> = ({
         TabIndicatorProps={{
           sx: {
             backgroundColor: colors.grey[50],
-            // opacity: 0.6,
             height: "40px",
             borderRadius: "40%",
             bottom: "15px",
           },
         }}
       >
-        <Tab
-          label="全部"
-          icon={<BallotIcon />}
-          iconPosition="start"
-          value={ClipBoardDataType.all}
-          sx={{ zIndex: 1 }}
-        />
-        <Tab
-          label="文本"
-          icon={<TextSnippetIcon />}
-          iconPosition="start"
-          value={ClipBoardDataType.text}
-          sx={{ zIndex: 1 }}
-        />
-        <Tab
-          label="文件"
-          iconPosition="start"
-          icon={<FilePresentIcon />}
-          value={ClipBoardDataType.file}
-          sx={{ zIndex: 1 }}
-        />
-        <Tab
-          label="图片"
-          icon={<ImageIcon />}
-          iconPosition="start"
-          value={ClipBoardDataType.image}
-          sx={{ zIndex: 1 }}
-        />
+        {filterTabList.map((x) => (
+          <Tab iconPosition="start" key={x.value} sx={{ zIndex: 1 }} {...x} />
+        ))}
       </Tabs>
     </Box>
   );
