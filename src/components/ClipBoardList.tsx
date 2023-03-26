@@ -5,7 +5,7 @@ import {
   ListItemText,
   colors,
 } from "@mui/material";
-import { FC, forwardRef } from "react";
+import { FC, forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { ClipBoardData } from "../hooks/useClipboardData";
 import { timeAgo } from "../utils/format";
 import { ClipBoardItemContent } from "./ClipBoardItemContent";
@@ -16,19 +16,36 @@ interface IProps {
   onActiveChange: (list: number[]) => void;
 }
 
-export const ClipBoardList = forwardRef<HTMLUListElement, IProps>(
+export interface IClipboardRef {
+  container: HTMLUListElement | null;
+  getActiveItem: () => HTMLElement | null;
+}
+
+export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
   ({ clipBoardList, activeIndexList, onActiveChange }, ref) => {
+    const containerRef = useRef<HTMLUListElement | null>(null);
+
+    useImperativeHandle(ref, () => ({
+      container: containerRef.current,
+      getActiveItem() {
+        return document.getElementById("clip-board-active");
+      },
+    }));
+
     return (
       <List
         sx={{
           overflowX: "auto",
         }}
-        ref={ref}
+        ref={(node) => (containerRef.current = node)}
       >
         {clipBoardList.map((x, index) => (
           <ListItem
             key={index}
             disablePadding
+            id={
+              activeIndexList.includes(index) ? "clip-board-active" : undefined
+            }
             sx={{
               border: `3px solid ${
                 activeIndexList.includes(index)

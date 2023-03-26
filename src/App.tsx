@@ -1,18 +1,13 @@
 import { useRef, useState } from "react";
-import {
-  Box,
-  Container,
-  createTheme,
-  IconButton,
-  ThemeProvider,
-} from "@mui/material";
+import { Container } from "@mui/material";
 import { FilterTab, filterTabList } from "./components/FilterTab";
 import { useClipboardData } from "./hooks/useClipboardData";
-import { ClipBoardList } from "./components/ClipBoardList";
+import { ClipBoardList, IClipboardRef } from "./components/ClipBoardList";
 import { ClipBoardDataType, copyToClipBoard, paste } from "./utils/clipboard";
 import { useKeyPress } from "ahooks";
 import { useThemeProvider } from "./hooks/useThemeProvider";
 import { Clear } from "./components/Clear";
+import { isInViewport } from "observe-element-in-viewport";
 
 function App() {
   const [clipBoardType, setClipBoard] = useState<{
@@ -31,22 +26,42 @@ function App() {
 
   const [activeIndexList, setActiveIndexList] = useState<number[]>([0]);
 
-  useKeyPress("uparrow", () =>
-    setActiveIndexList((pre) => [Math.max(pre[0] - 1, 0)])
-  );
+  useKeyPress("uparrow", async (e) => {
+    e.preventDefault();
+    setActiveIndexList((pre) => [Math.max(pre[0] - 1, 0)]);
+    const ele = clipboardRef.current?.getActiveItem();
+    if (
+      ele &&
+      !(await isInViewport(ele, {
+        modTop: "-150px",
+      }))
+    ) {
+      clipboardRef.current?.getActiveItem()?.scrollIntoView(true);
+    }
+  });
 
-  useKeyPress("downarrow", () =>
+  useKeyPress("downarrow", async (e) => {
+    e.preventDefault();
     setActiveIndexList((pre) => [
       Math.min(pre[0] + 1, clipBoardList.length - 1),
-    ])
-  );
+    ]);
+    const ele = clipboardRef.current?.getActiveItem();
+    if (
+      ele &&
+      !(await isInViewport(ele, {
+        modBottom: "-100px",
+      }))
+    ) {
+      clipboardRef.current?.getActiveItem()?.scrollIntoView(false);
+    }
+  });
 
   useKeyPress("enter", () => {
     copyToClipBoard(clipBoardList[activeIndexList[0]]);
     clearOne(clipBoardList[activeIndexList[0]].timestamp!);
     paste();
     setTimeout(() => setActiveIndexList([0]), 500);
-    listRef.current?.scrollTo(0, 0);
+    clipboardRef.current?.container?.scrollTo(0, 0);
   });
 
   useKeyPress("leftarrow", () => {
@@ -73,7 +88,7 @@ function App() {
     setActiveIndexList([0]);
   });
 
-  const listRef = useRef<HTMLUListElement | null>(null);
+  const clipboardRef = useRef<IClipboardRef | null>(null);
 
   return (
     <Provider>
@@ -96,7 +111,7 @@ function App() {
           }}
         />
         <ClipBoardList
-          ref={listRef}
+          ref={clipboardRef}
           clipBoardList={clipBoardList}
           activeIndexList={activeIndexList}
           onActiveChange={setActiveIndexList}

@@ -8,7 +8,7 @@
 
 > 暂未上线插件市场
 
-1. 下载[离线文件](https://github.com/flytam/utool-clipboard/releases/tag/1.0.0)，复制后打开 utool 进行安装
+1. 下载[离线文件](https://github.com/flytam/utool-clipboard/releases)，复制后打开 utool 进行安装
    ![](https://files.mdnice.com/user/8265/172f5f7b-d4b4-499a-a524-1fd1c89cef39.png)
 
 2. 通过 utool 进行调起
