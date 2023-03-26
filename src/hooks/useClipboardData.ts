@@ -70,10 +70,12 @@ export const useClipboardData = ({ filter }: params = {}) => {
     [clipBoardList, filter, filterText]
   );
 
-  const clear = useMemoizedFn(() => setClipBoardList([]));
+  const clearAll = useMemoizedFn(() => setClipBoardList([]));
+  const clearOne = useMemoizedFn((timestamp: number) => setClipBoardList(pre => pre?.filter(x => x.timestamp !== timestamp) ?? []))
 
   return {
     clipBoardList: filteredList,
-    clear,
+    clearAll,
+    clearOne
   };
 };

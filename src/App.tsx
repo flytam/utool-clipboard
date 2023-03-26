@@ -22,7 +22,8 @@ function App() {
     type: ClipBoardDataType.all,
     index: 0,
   });
-  const { clipBoardList, clear } = useClipboardData({
+
+  const { clipBoardList, clearAll, clearOne } = useClipboardData({
     filter: clipBoardType.type,
   });
 
@@ -42,28 +43,34 @@ function App() {
 
   useKeyPress("enter", () => {
     copyToClipBoard(clipBoardList[activeIndexList[0]]);
+    clearOne(clipBoardList[activeIndexList[0]].timestamp!);
     paste();
     setTimeout(() => setActiveIndexList([0]), 500);
     listRef.current?.scrollTo(0, 0);
   });
 
   useKeyPress("leftarrow", () => {
-    const nextIndex = Math.max(0, clipBoardType.index - 1);
+    let nextIndex = clipBoardType.index - 1;
+    if (nextIndex < 0) {
+      nextIndex = filterTabList.length - 1;
+    }
     setClipBoard({
       index: nextIndex,
       type: filterTabList[nextIndex].value,
     });
+    setActiveIndexList([0]);
   });
 
   useKeyPress("rightarrow", () => {
-    const nextIndex = Math.min(
-      filterTabList.length - 1,
-      clipBoardType.index + 1
-    );
+    let nextIndex = clipBoardType.index + 1;
+    if (nextIndex > filterTabList.length - 1) {
+      nextIndex = 0;
+    }
     setClipBoard({
       index: nextIndex,
       type: filterTabList[nextIndex].value,
     });
+    setActiveIndexList([0]);
   });
 
   const listRef = useRef<HTMLUListElement | null>(null);
@@ -77,7 +84,7 @@ function App() {
           flexDirection: "column",
         }}
       >
-        <Clear onClick={clear} />
+        <Clear onClick={clearAll} />
 
         <FilterTab
           value={clipBoardType.type}
