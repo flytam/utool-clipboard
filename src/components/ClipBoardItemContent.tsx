@@ -3,6 +3,9 @@ import { FC } from "react";
 import { ClipBoardData } from "../hooks/useClipboardData";
 import { ClipBoardDataType } from "../utils/clipboard";
 
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
+
 export const ClipBoardItemContent: FC<{
   item: ClipBoardData;
 }> = ({ item }) => {
@@ -13,7 +16,11 @@ export const ClipBoardItemContent: FC<{
           width: "100%",
         }}
       >
-        <img src={item.base64} style={{ height: "300px" }} />
+        <PhotoProvider>
+          <PhotoView src={item.base64}>
+            <img src={item.base64} style={{ height: "200px" }} />
+          </PhotoView>
+        </PhotoProvider>
         <Typography
           color={colors.grey[500]}
         >{`${item.width} x ${item.height}`}</Typography>
@@ -42,8 +49,16 @@ export const ClipBoardItemContent: FC<{
     <ListItemText
       sx={{
         padding: 0,
+        maxHeight: "200px",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        display: "-webkit-box",
+        WebkitLineClamp: 3,
+        WebkitBoxOrient: "vertical",
+        width: "200px",
       }}
       inset
+      disableTypography
       primary={item.data}
     />
   );

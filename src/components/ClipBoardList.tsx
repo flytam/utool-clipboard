@@ -5,8 +5,17 @@ import {
   ListItemText,
   colors,
 } from "@mui/material";
-import { FC, forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { useDocumentVisibility } from "ahooks";
+import {
+  FC,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
 import { ClipBoardData } from "../hooks/useClipboardData";
+import { ClipBoardRawData } from "../utils/clipboard";
 import { timeAgo } from "../utils/format";
 import { ClipBoardItemContent } from "./ClipBoardItemContent";
 
@@ -25,12 +34,24 @@ export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
   ({ clipBoardList, activeIndexList, onActiveChange }, ref) => {
     const containerRef = useRef<HTMLUListElement | null>(null);
 
+    const documentVisibility = useDocumentVisibility();
+
     useImperativeHandle(ref, () => ({
       container: containerRef.current,
       getActiveItem() {
         return document.getElementById("clip-board-active");
       },
     }));
+
+    const formatClipBoardList = useMemo(() => {
+      if (documentVisibility !== "visible") {
+        return clipBoardList as (ClipBoardRawData & { ago?: number })[];
+      }
+      return clipBoardList.map((x) => ({
+        ...x,
+        ago: timeAgo(x.timestamp!),
+      }));
+    }, [clipBoardList, documentVisibility]);
 
     return (
       <List
@@ -39,7 +60,7 @@ export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
         }}
         ref={(node) => (containerRef.current = node)}
       >
-        {clipBoardList.map((x, index) => (
+        {formatClipBoardList.map((x, index) => (
           <ListItem
             key={index}
             disablePadding
@@ -61,7 +82,7 @@ export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
             >
               <ListItemText
                 inset
-                secondary={timeAgo(x.timestamp!)}
+                secondary={x.ago}
                 sx={{
                   flexGrow: 0,
                   paddingLeft: "10px",
