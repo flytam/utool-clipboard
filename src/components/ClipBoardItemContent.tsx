@@ -1,14 +1,40 @@
-import { Box, colors, ListItemText, Typography } from "@mui/material";
-import { FC } from "react";
+import {
+  Box,
+  Button,
+  colors,
+  Drawer,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import { FC, useEffect, useRef } from "react";
 import { ClipBoardData } from "../hooks/useClipboardData";
 import { ClipBoardDataType } from "../utils/clipboard";
 
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
+import { useBoolean, useMutationObserver } from "ahooks";
 
 export const ClipBoardItemContent: FC<{
   item: ClipBoardData;
 }> = ({ item }) => {
+  const [showMore, { toggle: toggleShowMore }] = useBoolean(false);
+
+  const [
+    showMoreButton,
+    { setTrue: setShowMoreButtonShow, setFalse: setHideMoreButtonShow },
+  ] = useBoolean(false);
+
+  const ref = useRef<HTMLDivElement>();
+
+  useEffect(() => {
+    console.log("hhhhh", ref.current?.offsetHeight, ref.current?.scrollHeight);
+    if (ref.current && ref.current.offsetHeight < ref.current.scrollHeight) {
+      setShowMoreButtonShow();
+    } else {
+      setHideMoreButtonShow();
+    }
+  }, [item.type === ClipBoardDataType.text ? item.data : null, ref.current]);
+
   if (item.type === ClipBoardDataType.image) {
     return (
       <Box
@@ -46,20 +72,51 @@ export const ClipBoardItemContent: FC<{
   }
 
   return (
-    <ListItemText
+    <Box
       sx={{
-        padding: 0,
-        maxHeight: "200px",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        display: "-webkit-box",
-        WebkitLineClamp: 3,
-        WebkitBoxOrient: "vertical",
-        width: "200px",
+        width: "100%",
       }}
-      inset
-      disableTypography
-      primary={item.data}
-    />
+    >
+      <ListItemText
+        ref={ref}
+        sx={{
+          width: "100%",
+          padding: 0,
+          maxHeight: "200px",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          display: "-webkit-box",
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: "vertical",
+        }}
+        inset
+        disableTypography
+        primary={item.data}
+      />
+      {showMoreButton ? (
+        <>
+          <Button
+            onClick={(e) => {
+              toggleShowMore();
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+            variant="text"
+          >
+            更多
+          </Button>
+          <Drawer anchor={"right"} open={showMore} onClose={toggleShowMore}>
+            <Box
+              sx={{
+                width: "500px",
+                padding: "16px",
+              }}
+            >
+              {item.data}
+            </Box>
+          </Drawer>
+        </>
+      ) : null}
+    </Box>
   );
 };

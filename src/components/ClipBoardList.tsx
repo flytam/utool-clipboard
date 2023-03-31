@@ -6,14 +6,7 @@ import {
   colors,
 } from "@mui/material";
 import { useDocumentVisibility } from "ahooks";
-import {
-  FC,
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from "react";
+import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import { ClipBoardData } from "../hooks/useClipboardData";
 import { ClipBoardRawData } from "../utils/clipboard";
 import { timeAgo } from "../utils/format";

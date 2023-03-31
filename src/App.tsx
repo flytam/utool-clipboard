@@ -8,6 +8,7 @@ import { useKeyPress } from "ahooks";
 import { useThemeProvider } from "./hooks/useThemeProvider";
 import { Clear } from "./components/Clear";
 import { isInViewport } from "observe-element-in-viewport";
+import { confirmDialog } from "./utils/confirm";
 
 function App() {
   const [clipBoardType, setClipBoard] = useState<{
@@ -99,7 +100,12 @@ function App() {
           flexDirection: "column",
         }}
       >
-        <Clear onClick={clearAll} />
+        <Clear
+          onClick={async () => {
+            await confirmDialog();
+            clearAll();
+          }}
+        />
 
         <FilterTab
           value={clipBoardType.type}
