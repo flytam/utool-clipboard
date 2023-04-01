@@ -7,6 +7,8 @@ import {
   readClipBoard,
 } from "../utils/clipboard";
 import { downloadClipboard } from "../utils/downloadClipboard";
+import { usePluginOut } from "./usePluginLifecycle";
+import { useLocalDb } from "./useLocalDb";
 
 export type ClipBoardData = ClipBoardRawData;
 
@@ -17,13 +19,12 @@ interface params {
 const MAX_SIZE = 100;
 
 export const useClipboardData = ({ filter }: params = {}) => {
-  // TODO: 本地持久化，使用写本地文件替代
-  //   const [clipBoardList, setClipBoardList] = useState<ClipBoardData[]>([]);
-  const [clipBoardList, setClipBoardList] = useLocalStorageState<
-    ClipBoardData[]
-  >("clipBoardData", {
-    defaultValue: [],
-  });
+  const [clipBoardList, setClipBoardList] = useLocalDb<ClipBoardData[]>(
+    "clipBoardData",
+    {
+      defaultValue: [],
+    }
+  );
 
   const [filterText, setFilterText] = useState<string>("");
 
@@ -32,7 +33,6 @@ export const useClipboardData = ({ filter }: params = {}) => {
       window.utoolClipboard.clipboardListener.startListening();
       window.utoolClipboard.clipboardListener.on("change", async () => {
         const item = await readClipBoard();
-        console.log("Data from clipboard", item);
         if (item) {
           setClipBoardList((pre = []) =>
             [
@@ -70,12 +70,24 @@ export const useClipboardData = ({ filter }: params = {}) => {
     [clipBoardList, filter, filterText]
   );
 
+  usePluginOut((processExit) => {
+    if (processExit) {
+      window.utoolClipboard.unlinkSync(
+        window.utoolClipboard.clipboardListener.filePath
+      );
+    }
+  });
+
   const clearAll = useMemoizedFn(() => setClipBoardList([]));
-  const clearOne = useMemoizedFn((timestamp: number) => setClipBoardList(pre => pre?.filter(x => x.timestamp !== timestamp) ?? []))
+  const clearOne = useMemoizedFn((timestamp: number) =>
+    setClipBoardList(
+      (pre) => pre?.filter((x) => x.timestamp !== timestamp) ?? []
+    )
+  );
 
   return {
     clipBoardList: filteredList,
     clearAll,
-    clearOne
+    clearOne,
   };
 };

@@ -5,10 +5,9 @@ import {
   ListItemText,
   colors,
 } from "@mui/material";
-import { useDocumentVisibility } from "ahooks";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import { ClipBoardData } from "../hooks/useClipboardData";
-import { ClipBoardRawData } from "../utils/clipboard";
+import { usePluginEnterFn } from "../hooks/usePluginLifecycle";
 import { timeAgo } from "../utils/format";
 import { ClipBoardItemContent } from "./ClipBoardItemContent";
 
@@ -27,8 +26,6 @@ export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
   ({ clipBoardList, activeIndexList, onActiveChange }, ref) => {
     const containerRef = useRef<HTMLUListElement | null>(null);
 
-    const documentVisibility = useDocumentVisibility();
-
     useImperativeHandle(ref, () => ({
       container: containerRef.current,
       getActiveItem() {
@@ -36,15 +33,17 @@ export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
       },
     }));
 
-    const formatClipBoardList = useMemo(() => {
-      if (documentVisibility !== "visible") {
-        return clipBoardList as (ClipBoardRawData & { ago?: number })[];
-      }
-      return clipBoardList.map((x) => ({
+    const formatClipBoardList =
+      usePluginEnterFn(() => {
+        return clipBoardList.map((x) => ({
+          ...x,
+          ago: timeAgo(x.timestamp!),
+        }));
+      }) ??
+      clipBoardList.map((x) => ({
         ...x,
         ago: timeAgo(x.timestamp!),
       }));
-    }, [clipBoardList, documentVisibility]);
 
     return (
       <List

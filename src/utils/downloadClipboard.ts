@@ -1,7 +1,5 @@
-import { arrayBufferToBase64 } from "./arraybuffer";
-import { darwin, win32, linux} from '../node-clipboard'
+import { darwin } from '../node-clipboard'
 import { wait } from "./timer";
-
 
 export const downloadClipboard = async () => {
   if (

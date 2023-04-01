@@ -27,7 +27,6 @@ export const ClipBoardItemContent: FC<{
   const ref = useRef<HTMLDivElement>();
 
   useEffect(() => {
-    console.log("hhhhh", ref.current?.offsetHeight, ref.current?.scrollHeight);
     if (ref.current && ref.current.offsetHeight < ref.current.scrollHeight) {
       setShowMoreButtonShow();
     } else {

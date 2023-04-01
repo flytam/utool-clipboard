@@ -1,6 +1,7 @@
 import { EventEmitter } from "events";
 import { Clipboard } from "electron";
-import { writeFileSync, existsSync } from "fs";
+import { writeFileSync, existsSync, readFileSync, unlinkSync } from "fs";
+import * as path from "path";
 
 declare global {
   interface ClipboardEventListener extends EventEmitter {
@@ -15,6 +16,13 @@ declare global {
     writeFileBase64Sync: (filePath: string, str: string) => void;
 
     existsSync: typeof existsSync;
+    writeFileSync: typeof writeFileSync;
+    readFileSync: typeof readFileSync;
+    unlinkSync: typeof unlinkSync;
+
+    path: typeof path;
+    // ~/.utool_clipboard/xxx
+    dirPath: string;
   }
 
   interface Window {

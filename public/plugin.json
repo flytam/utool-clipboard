@@ -1,6 +1,6 @@
 {
   "main": "http://127.0.0.1:3000/",
-  "preload": "preload.js",
+  "preload": "./preload.js",
   "logo": "logo.png",
   "features": [
     {

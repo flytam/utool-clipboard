@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "module": "CommonJS",
+        "target": "ESNext",
+        "moduleResolution": "Node"
+    },
+    "include": [
+        "preload",
+        "src/global.d.ts"
+    ]
+}
