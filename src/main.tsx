@@ -4,7 +4,9 @@ import "./index.css";
 import VConsole from "vconsole";
 
 if (DEBUG) {
-  // const vconsole = new VConsole();
+  if (import.meta.env.PROD) {
+    const vconsole = new VConsole();
+  }
 }
 
 window.addEventListener("error", (e) => {

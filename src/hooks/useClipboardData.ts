@@ -4,6 +4,7 @@ import {
   ClipBoardDataType,
   ClipBoardRawData,
   filterClipBoard,
+  initClipboard,
   readClipBoard,
 } from "../utils/clipboard";
 import { downloadClipboard } from "../utils/downloadClipboard";
@@ -29,22 +30,23 @@ export const useClipboardData = ({ filter }: params = {}) => {
   const [filterText, setFilterText] = useState<string>("");
 
   useEffect(() => {
-    downloadClipboard().then(() => {
-      window.utoolClipboard.clipboardListener.startListening();
-      window.utoolClipboard.clipboardListener.on("change", async () => {
-        const item = await readClipBoard();
-        if (item) {
-          setClipBoardList((pre = []) =>
-            [
-              {
-                ...item,
-                timestamp: Date.now(),
-              },
-              ...pre,
-            ].slice(0, MAX_SIZE)
-          );
-        }
-      });
+    const changeFn = async () => {
+      const item = await readClipBoard();
+      console.info("[Copy data]", item);
+      if (item) {
+        setClipBoardList((pre = []) =>
+          [
+            {
+              ...item,
+              timestamp: Date.now(),
+            },
+            ...pre,
+          ].slice(0, MAX_SIZE)
+        );
+      }
+    };
+    initClipboard().then(() => {
+      window.utoolClipboard.clipboardListener.on("change", changeFn);
     });
 
     utools.setSubInput(
@@ -54,9 +56,11 @@ export const useClipboardData = ({ filter }: params = {}) => {
       "搜索内容",
       true
     );
-
     return () => {
-      window.utoolClipboard.clipboardListener.stopListening();
+      window.utoolClipboard.clipboardListener.removeListener(
+        "change",
+        changeFn
+      );
     };
   }, []);
 

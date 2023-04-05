@@ -16,27 +16,42 @@ export const usePluginOut: UToolsApi["onPluginOut"] = (callback) => {
   fnRef.current = callback;
 
   useEffect(() => {
-    utools.onPluginOut(fnRef.current)
-  }, [])
-}
+    utools.onPluginOut(fnRef.current);
+  }, []);
+};
 
-type PluginEnterFn<T = any> = (...args: Parameters<Parameters<UToolsApi["onPluginEnter"]>[0]>) => T
+type Nullable<T> = {
+  [K in keyof T]: T[K] | undefined;
+};
+type PluginEnterFn<T = any> = (
+  ...args: Nullable<Parameters<Parameters<UToolsApi["onPluginEnter"]>[0]>>
+) => T;
 
+export const usePluginEnterFn = <T>(
+  callback: PluginEnterFn<T>,
+  options?: {
+    defaultValue?: T;
+    deps?: unknown[];
+  }
+): T | undefined => {
+  const [retValue, setRetValue] = useState<T | undefined>(
+    options?.defaultValue
+  );
+  const fnRef = useRef<PluginEnterFn<T | void>>(() => {});
 
-export const usePluginEnterFn= <T>(callback: PluginEnterFn<T>): T | undefined => {
-    const [retValue, setRetValue] = useState<T>()
-    const fnRef = useRef<PluginEnterFn<T>>();
-  
-    fnRef.current = function (...args) {
-        const ret = callback.call(this, ...args)
-        setRetValue(ret)
-        return ret
-    }
-  
-    useEffect(() => {
-      utools.onPluginEnter(fnRef.current!);
-    }, []);
-
-    return retValue
+  fnRef.current = function (...args) {
+    const ret = callback.call(this, ...args);
+    setRetValue(ret);
+    return ret;
   };
-  
+
+  useEffect(() => {
+    utools.onPluginEnter(fnRef.current!);
+  }, []);
+
+  useEffect(() => {
+    fnRef.current(undefined);
+  }, options?.deps);
+
+  return retValue;
+};

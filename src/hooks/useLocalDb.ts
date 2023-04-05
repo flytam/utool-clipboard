@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useMemoizedFn } from "ahooks";
+import { decrypt, encrypt } from "../utils/crypto";
 
 interface Options<T> {
   defaultValue?: T;
@@ -9,8 +10,8 @@ interface Options<T> {
 
 const defaultOptions: Options<any> = {
   defaultValue: undefined,
-  serializer: (v) => JSON.stringify(v),
-  deserializer: (v) => JSON.parse(v),
+  serializer: (v) => encrypt(JSON.stringify(v)),
+  deserializer: (v) => JSON.parse(decrypt(v)),
 };
 
 const { readFileSync, writeFileSync, existsSync } = window.utoolClipboard;

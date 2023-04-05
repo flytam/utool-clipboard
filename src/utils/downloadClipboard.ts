@@ -1,4 +1,4 @@
-import { darwin } from '../node-clipboard'
+import { darwin } from "../node-clipboard";
 import { wait } from "./timer";
 
 export const downloadClipboard = async () => {
@@ -7,16 +7,19 @@ export const downloadClipboard = async () => {
       window.utoolClipboard.clipboardListener.filePath
     )
   ) {
-   console.log('剪切板程序已存在')
+    console.info("剪切板程序已存在");
     return;
   }
 
-  console.log('剪切板程序不存在，安装中')
+  console.info(
+    window.utoolClipboard.clipboardListener.filePath,
+    "剪切板程序不存在，安装中"
+  );
 
   window.utoolClipboard.writeFileBase64Sync(
     window.utoolClipboard.clipboardListener.filePath,
     darwin
   );
 
-  await wait(500)
+  await wait(500);
 };

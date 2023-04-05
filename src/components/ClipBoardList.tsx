@@ -15,6 +15,7 @@ interface IProps {
   clipBoardList: ClipBoardData[];
   activeIndexList: number[];
   onActiveChange: (list: number[]) => void;
+  onDoubleClickCopy: (index: number) => void;
 }
 
 export interface IClipboardRef {
@@ -23,7 +24,10 @@ export interface IClipboardRef {
 }
 
 export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
-  ({ clipBoardList, activeIndexList, onActiveChange }, ref) => {
+  (
+    { clipBoardList, activeIndexList, onActiveChange, onDoubleClickCopy },
+    ref
+  ) => {
     const containerRef = useRef<HTMLUListElement | null>(null);
 
     useImperativeHandle(ref, () => ({
@@ -33,26 +37,29 @@ export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
       },
     }));
 
-    const formatClipBoardList =
-      usePluginEnterFn(() => {
+    const formatClipBoardList = usePluginEnterFn(
+      () => {
         return clipBoardList.map((x) => ({
           ...x,
           ago: timeAgo(x.timestamp!),
         }));
-      }) ??
-      clipBoardList.map((x) => ({
-        ...x,
-        ago: timeAgo(x.timestamp!),
-      }));
+      },
+      {
+        deps: [clipBoardList],
+        defaultValue: [],
+      }
+    );
+
+    // console.info("formatClipBoardList", formatClipBoardList);
 
     return (
       <List
         sx={{
-          overflowX: "auto",
+          overflowX: "hidden",
         }}
         ref={(node) => (containerRef.current = node)}
       >
-        {formatClipBoardList.map((x, index) => (
+        {formatClipBoardList!.map((x, index) => (
           <ListItem
             key={index}
             disablePadding
@@ -60,31 +67,34 @@ export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
               activeIndexList.includes(index) ? "clip-board-active" : undefined
             }
             sx={{
-              border: `3px solid ${
-                activeIndexList.includes(index)
-                  ? colors.indigo[500]
-                  : "transparent"
-              }`,
+              padding: "8px",
+              ...(activeIndexList.includes(index)
+                ? {
+                    border: `2px solid ${colors.indigo[500]}`,
+                  }
+                : {
+                    border: "2px solid transparent",
+                    borderBottomColor: colors.grey[300],
+                  }),
             }}
+            divider
+            onClick={(e) => {
+              onActiveChange([index]);
+            }}
+            onDoubleClick={() => onDoubleClickCopy(index)}
           >
-            <ListItemButton
-              divider
-              selected={activeIndexList.includes(index)}
-              onClick={() => onActiveChange([index])}
-            >
-              <ListItemText
-                inset
-                secondary={x.ago}
-                sx={{
-                  flexGrow: 0,
-                  paddingLeft: "10px",
-                  width: "100px",
-                  flexShrink: 0,
-                }}
-              />
-              <ClipBoardItemContent item={x} />
-              <ListItemText inset secondary={index} sx={{ flexGrow: 0 }} />
-            </ListItemButton>
+            <ListItemText
+              inset
+              secondary={x.ago}
+              sx={{
+                flexGrow: 0,
+                paddingLeft: "10px",
+                width: "100px",
+                flexShrink: 0,
+              }}
+            />
+            <ClipBoardItemContent item={x} />
+            <ListItemText inset secondary={index} sx={{ flexGrow: 0 }} />
           </ListItem>
         ))}
       </List>
