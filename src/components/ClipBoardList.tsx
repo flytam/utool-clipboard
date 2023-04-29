@@ -50,8 +50,6 @@ export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
       }
     );
 
-    // console.info("formatClipBoardList", formatClipBoardList);
-
     return (
       <List
         sx={{

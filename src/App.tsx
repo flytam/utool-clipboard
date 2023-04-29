@@ -78,7 +78,8 @@ function App() {
     doCopy(activeIndexList[0]);
   });
 
-  useKeyPress("leftarrow", () => {
+  useKeyPress("leftarrow", (e) => {
+    e.preventDefault();
     let nextIndex = clipBoardType.index - 1;
     if (nextIndex < 0) {
       nextIndex = filterTabList.length - 1;
@@ -91,7 +92,8 @@ function App() {
     setActiveIndexList([0]);
   });
 
-  useKeyPress("rightarrow", () => {
+  useKeyPress("rightarrow", (e) => {
+    e.preventDefault();
     let nextIndex = clipBoardType.index + 1;
     if (nextIndex > filterTabList.length - 1) {
       nextIndex = 0;

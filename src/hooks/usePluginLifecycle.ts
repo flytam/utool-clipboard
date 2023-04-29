@@ -37,6 +37,7 @@ export const usePluginEnterFn = <T>(
   const [retValue, setRetValue] = useState<T | undefined>(
     options?.defaultValue
   );
+  const [_, setEnterTime] = useState(() => Date.now());
   const fnRef = useRef<PluginEnterFn<T | void>>(() => {});
 
   fnRef.current = function (...args) {
@@ -46,7 +47,7 @@ export const usePluginEnterFn = <T>(
   };
 
   useEffect(() => {
-    utools.onPluginEnter(fnRef.current!);
+    utools.onPluginEnter(() => setEnterTime(Date.now()));
   }, []);
 
   useEffect(() => {
