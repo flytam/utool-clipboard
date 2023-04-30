@@ -118,9 +118,38 @@ function App() {
         }}
       >
         <Clear
+          type="one"
           onClick={async () => {
-            await confirmDialog();
+            const ts = clipBoardList[activeIndexList[0]].timestamp;
+            if (ts) {
+              await confirmDialog({
+                title: "确认删除当前选中记录",
+                description: "清除后无法恢复，请确认是否继续",
+              });
+              clearOne(ts);
+            }
+          }}
+          sx={{
+            position: "fixed",
+            zIndex: 100,
+            right: "80px",
+            bottom: "20px",
+          }}
+        />
+        <Clear
+          type="all"
+          onClick={async () => {
+            await confirmDialog({
+              title: "确认清除剪切板记录",
+              description: "清除后无法恢复，请确认是否继续",
+            });
             clearAll();
+          }}
+          sx={{
+            position: "fixed",
+            zIndex: 100,
+            right: "20px",
+            bottom: "20px",
           }}
         />
 

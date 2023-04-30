@@ -1,24 +1,26 @@
-import { colors, IconButton, Tooltip } from "@mui/material";
+import { colors, IconButton, SxProps, Theme, Tooltip } from "@mui/material";
 import { FC } from "react";
-import { ClearAll } from "@mui/icons-material";
+import { ClearAll, Clear as ClearIcon } from "@mui/icons-material";
 
 export const Clear: FC<{
   onClick: () => void;
-}> = ({ onClick }) => {
+  sx?: SxProps<Theme>;
+  type: "all" | "one";
+}> = ({ onClick, sx = {}, type }) => {
   return (
-    <Tooltip title="清空所有记录">
+    <Tooltip
+      title={type === "all" ? "清空所有记录" : "删除当前选中记录"}
+      placement="left-start"
+    >
       <IconButton
         component="label"
         onClick={onClick}
         sx={{
-          position: "fixed",
-          zIndex: 100,
-          right: "20px",
-          bottom: "20px",
           background: colors.grey[300],
+          ...sx,
         }}
       >
-        <ClearAll />
+        {type === "all" ? <ClearAll /> : <ClearIcon />}
       </IconButton>
     </Tooltip>
   );
