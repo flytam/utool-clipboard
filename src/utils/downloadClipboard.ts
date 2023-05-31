@@ -1,4 +1,4 @@
-import { darwin } from "../node-clipboard";
+import { darwin, win32, linux } from "../node-clipboard";
 import { wait } from "./timer";
 
 export const downloadClipboard = async () => {
@@ -18,7 +18,7 @@ export const downloadClipboard = async () => {
 
   window.utoolClipboard.writeFileBase64Sync(
     window.utoolClipboard.clipboardListener.filePath,
-    darwin
+    utools.isMacOS() ? darwin : utools.isLinux() ? linux : win32
   );
 
   await wait(500);

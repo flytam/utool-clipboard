@@ -51,12 +51,13 @@ export const FilterTab: FC<IFilterTabProps> = ({
     >
       <Tabs
         value={value}
-        onChange={(_, v) =>
+        onChange={(e, v) => {
+          e.preventDefault();
           onChange(
             v,
             filterTabList.findIndex((x) => x.value === v)
-          )
-        }
+          );
+        }}
         classes={{
           flexContainer: "oooo",
         }}
