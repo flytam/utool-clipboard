@@ -7,7 +7,6 @@ import {
 } from "@mui/material";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import { ClipBoardData } from "../hooks/useClipboardData";
-import { usePluginEnterFn } from "../hooks/usePluginLifecycle";
 import { timeAgo } from "../utils/format";
 import { ClipBoardItemContent } from "./ClipBoardItemContent";
 
@@ -37,18 +36,7 @@ export const ClipBoardList = forwardRef<IClipboardRef, IProps>(
       },
     }));
 
-    const formatClipBoardList = usePluginEnterFn(
-      () => {
-        return clipBoardList.map((x) => ({
-          ...x,
-          ago: timeAgo(x.timestamp!),
-        }));
-      },
-      {
-        deps: [clipBoardList],
-        defaultValue: [],
-      }
-    );
+    const formatClipBoardList: any[] = [];
 
     return (
       <List

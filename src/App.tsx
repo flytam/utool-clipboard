@@ -9,6 +9,13 @@ import { useThemeProvider } from "./hooks/useThemeProvider";
 import { Clear } from "./components/Clear";
 import { isInViewport } from "observe-element-in-viewport";
 import { confirmDialog } from "./utils/confirm";
+import { invoke } from "@tauri-apps/api";
+
+invoke("greet", { name: "World" })
+  // `invoke` returns a Promise
+  .then((response) => console.log(response));
+
+// window.__TAURI__.f
 
 function App() {
   const [clipBoardType, setClipBoard] = useState<{

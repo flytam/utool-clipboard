@@ -7,8 +7,6 @@ import {
   initClipboard,
   readClipBoard,
 } from "../utils/clipboard";
-import { downloadClipboard } from "../utils/downloadClipboard";
-import { usePluginOut } from "./usePluginLifecycle";
 import { useLocalDb } from "./useLocalDb";
 
 export type ClipBoardData = ClipBoardRawData;
@@ -45,23 +43,9 @@ export const useClipboardData = ({ filter }: params = {}) => {
         );
       }
     };
-    initClipboard().then(() => {
-      window.utoolClipboard.clipboardListener.on("change", changeFn);
-    });
+    initClipboard().then(() => {});
 
-    utools.setSubInput(
-      (item) => {
-        setFilterText(item.text);
-      },
-      "搜索内容",
-      true
-    );
-    return () => {
-      window.utoolClipboard.clipboardListener.removeListener(
-        "change",
-        changeFn
-      );
-    };
+    return () => {};
   }, []);
 
   const filteredList = useMemo(
@@ -73,14 +57,6 @@ export const useClipboardData = ({ filter }: params = {}) => {
       ),
     [clipBoardList, filter, filterText]
   );
-
-  usePluginOut((processExit) => {
-    if (processExit) {
-      window.utoolClipboard.unlinkSync(
-        window.utoolClipboard.clipboardListener.filePath
-      );
-    }
-  });
 
   const clearAll = useMemoizedFn(() => setClipBoardList([]));
   const clearOne = useMemoizedFn((timestamp: number) =>

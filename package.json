@@ -1,35 +1,35 @@
 {
-  "name": "utool-clipboard",
+  "name": "clipboard",
   "private": true,
   "version": "0.0.0",
   "scripts": {
+    "start": "tauri dev",
     "dev": "export DEBUG=1 && vite",
     "build": "tsc && vite build",
     "build:debug": "export DEBUG=1 && npm run build",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "compiler:clipboard-listener": "swiftc ./src-tauri/platform/clipboard-event-handler-mac.swift -o ./src-tauri/platform/clipboard-event-handler-aarch64-apple-darwin"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.13",
+    "@tauri-apps/api": "^1.5.3",
     "ahooks": "^3.7.5",
     "axios": "^1.3.4",
-    "clipboard-event": "^1.6.0",
-    "crypto-js": "^4.1.1",
     "dayjs": "^1.11.7",
     "lodash-es": "^4.17.21",
     "observe-element-in-viewport": "^0.0.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-photo-view": "^1.2.3",
+    "rollup-plugin-visualizer": "^5.12.0",
     "vconsole": "^3.15.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^24.0.1",
-    "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/plugin-typescript": "^11.0.0",
+    "@tauri-apps/cli": "^1.5.9",
     "@types/crypto-js": "^4.1.1",
     "@types/fs-extra": "^11.0.1",
     "@types/lodash-es": "^4.17.7",
@@ -38,19 +38,13 @@
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react-swc": "^3.0.0",
     "autoprefixer": "^10.4.14",
-    "electron": "^23.1.4",
     "fs-extra": "^11.1.0",
     "husky": "^8.0.0",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
     "pretty-quick": "^3.1.3",
-    "rollup": "^3.20.2",
-    "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-globals": "^1.4.0",
-    "rollup-plugin-visualizer": "^5.9.0",
     "tailwindcss": "^3.2.7",
     "typescript": "^4.9.3",
-    "utools-api-types": "^3.0.0",
     "vite": "^4.2.0"
   }
 }

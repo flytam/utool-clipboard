@@ -1,27 +1,9 @@
 // import { isEqual } from "lodash-es";
-import { downloadClipboard } from "./downloadClipboard";
+import { readText } from "@tauri-apps/api/clipboard";
 
 let init = false;
 
-export const initClipboard = async () => {
-  if (init) {
-    return;
-  }
-  await downloadClipboard();
-  window.utoolClipboard.clipboardListener.startListening();
-  init = true;
-
-  window.utoolClipboard.clipboardListener.on("change", async () => {
-    const item = await readClipBoard();
-    lastClipBoardData = item;
-  });
-
-  utools.onPluginOut((processExit) => {
-    if (processExit) {
-      window.utoolClipboard.clipboardListener.stopListening();
-    }
-  });
-};
+export const initClipboard = async () => {};
 
 export type ClipBoardRawData =
   | {
@@ -56,42 +38,7 @@ let lastClipBoardData: ClipBoardRawData | undefined;
 export const readClipBoard = async (): Promise<
   ClipBoardRawData | undefined
 > => {
-  const _readClipBoard = async (): Promise<ClipBoardRawData | undefined> => {
-    let files = utools.getCopyedFiles();
-    if (files) {
-      return {
-        type: ClipBoardDataType.file,
-        files: await Promise.all(
-          files.map(async (x) => {
-            const icon = window.utools.getFileIcon(x.path);
-            return {
-              ...x,
-              icon,
-            };
-          })
-        ),
-      };
-    }
-
-    const text = window.utoolClipboard.clipboard.readText();
-    if (text.trim()) return { type: ClipBoardDataType.text, data: text };
-
-    const image = window.utoolClipboard.clipboard.readImage();
-    const base64 = image.toDataURL();
-    const size = image.getSize();
-    if (!image.isEmpty()) {
-      return {
-        type: ClipBoardDataType.image,
-        base64,
-        height: size.height,
-        width: size.width,
-      };
-    }
-  };
-
-  const retClipBoardData = await _readClipBoard();
-
-  return retClipBoardData;
+  return undefined;
 };
 
 // export const checkClipBoardChange = async (): Promise<boolean> => {
@@ -113,23 +60,7 @@ export const readClipBoard = async (): Promise<
 export const copyToClipBoard = (
   item: ClipBoardRawData,
   hideMainWindow = true
-) => {
-  switch (item.type) {
-    case ClipBoardDataType.text:
-      utools.copyText(item.data);
-      break;
-    case ClipBoardDataType.image:
-      utools.copyImage(item.base64);
-      break;
-    case ClipBoardDataType.file:
-      const paths = item.files.map((file) => file.path);
-      utools.copyFile(paths);
-      break;
-  }
-  if (hideMainWindow) {
-    utools.hideMainWindow();
-  }
-};
+) => {};
 
 export enum ClipBoardDataType {
   text = "text",
@@ -141,14 +72,7 @@ export enum ClipBoardDataType {
 /**
  * 粘贴
  */
-export const paste = () => {
-  utools.hideMainWindow();
-  if (utools.isMacOS()) {
-    utools.simulateKeyboardTap("v", "command");
-  } else {
-    utools.simulateKeyboardTap("v", "ctrl");
-  }
-};
+export const paste = () => {};
 
 export const filterClipBoard = (item: ClipBoardRawData, filterText: string) => {
   if (!filterText.length) {
