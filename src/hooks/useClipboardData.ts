@@ -49,6 +49,19 @@ export const useClipboardData = ({ filter }: params = {}) => {
       window.utoolClipboard.clipboardListener.on("change", changeFn);
     });
 
+    const visibilitychangeCb = () => {
+      if (document.visibilityState === "visible") {
+        utools.setSubInput(
+          (item) => {
+            setFilterText(item.text);
+          },
+          "搜索内容",
+          true
+        );
+      }
+    };
+    document.addEventListener("visibilitychange", visibilitychangeCb);
+
     utools.setSubInput(
       (item) => {
         setFilterText(item.text);
@@ -61,6 +74,7 @@ export const useClipboardData = ({ filter }: params = {}) => {
         "change",
         changeFn
       );
+      document.removeEventListener("visibilitychange", visibilitychangeCb);
     };
   }, []);
 
