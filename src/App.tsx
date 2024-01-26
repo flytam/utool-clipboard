@@ -28,12 +28,11 @@ function App() {
   const [activeIndexList, setActiveIndexList] = useState<number[]>([0]);
 
   const doCopy = useMemoizedFn(async (index: number) => {
-    if (index === 0) {
-      paste();
-      return;
-    }
     copyToClipBoard(clipBoardList[index]);
     paste();
+    if (index === 0) {
+      return;
+    }
     setTimeout(() => {
       clearOne(clipBoardList[index].timestamp!);
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocalStorageState, useMemoizedFn } from "ahooks";
 import {
   ClipBoardDataType,
@@ -28,6 +28,8 @@ export const useClipboardData = ({ filter }: params = {}) => {
   );
 
   const [filterText, setFilterText] = useState<string>("");
+  const filterTextRef = useRef(filterText);
+  filterTextRef.current = filterText;
 
   useEffect(() => {
     const changeFn = async () => {
@@ -58,6 +60,7 @@ export const useClipboardData = ({ filter }: params = {}) => {
           "搜索内容",
           true
         );
+        utools.setSubInputValue(filterTextRef.current);
       }
     };
     document.addEventListener("visibilitychange", visibilitychangeCb);
